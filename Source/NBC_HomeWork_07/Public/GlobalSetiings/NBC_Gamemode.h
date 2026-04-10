@@ -8,4 +8,7 @@ UCLASS()
 class NBC_HOMEWORK_07_API ANBC_Gamemode : public AGameMode
 {
 	GENERATED_BODY()
+	
+public:
+	ANBC_Gamemode();
 };
