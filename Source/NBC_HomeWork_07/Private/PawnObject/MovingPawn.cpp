@@ -34,6 +34,7 @@ AMovingPawn::AMovingPawn()
 void AMovingPawn::BeginPlay()
 {
 	Super::BeginPlay();
+	// Controller = Cast<ABasePlayerController>(GetController());
 }
 
 
@@ -60,13 +61,32 @@ void AMovingPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 void AMovingPawn::Move(const FInputActionValue& MoveValue)
 {
-	FVector MoveAmount = MoveValue.Get<FVector>();
+	if (!Controller)
+	{
+		return;
+	}
 	
+	UE_LOG(LogTemp,Warning,TEXT("Move"));
+	
+	const FVector2D MoveAmount = MoveValue.Get<FVector2D>();
+	
+	UE_LOG(LogTemp,Log,TEXT("MoveAmount %f"),MoveAmount.X);
+	
+	if (!FMath::IsNearlyZero(MoveAmount.X))
+	{
+		AddMovementInput(GetActorForwardVector(), MoveAmount.X);
+	}
+	
+	if (!FMath::IsNearlyZero(MoveAmount.Y))
+	{
+		AddMovementInput(GetActorForwardVector(), MoveAmount.Y);
+	}
 }
 
 void AMovingPawn::Look(const FInputActionValue& LookValue)
 {
-	FVector MoveAmount = LookValue.Get<FVector>();
+	if (!Controller) return;
 	
+	FVector MoveAmount = LookValue.Get<FVector>();
 }
 
