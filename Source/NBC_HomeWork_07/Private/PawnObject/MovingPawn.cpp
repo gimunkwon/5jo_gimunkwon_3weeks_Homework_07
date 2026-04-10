@@ -1,10 +1,18 @@
 #include "NBC_HomeWork_07/Public/PawnObject/MovingPawn.h"
 
+#include "Components/CapsuleComponent.h"
 
 
 AMovingPawn::AMovingPawn()
 {
 	PrimaryActorTick.bCanEverTick = true;
+	
+	CapsuleComp = CreateDefaultSubobject<UCapsuleComponent>(TEXT("CapsuleComponent"));
+	RootComponent = CapsuleComp;
+	
+	StaticMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
+	StaticMeshComp->SetupAttachment(CapsuleComp);
+	
 }
 
 

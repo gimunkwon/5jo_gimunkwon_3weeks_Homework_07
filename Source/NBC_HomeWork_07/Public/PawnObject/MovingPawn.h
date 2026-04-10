@@ -4,6 +4,8 @@
 #include "GameFramework/Pawn.h"
 #include "MovingPawn.generated.h"
 
+class UCapsuleComponent;
+
 UCLASS()
 class NBC_HOMEWORK_07_API AMovingPawn : public APawn
 {
@@ -11,10 +13,10 @@ class NBC_HOMEWORK_07_API AMovingPawn : public APawn
 public:
 	AMovingPawn();
 protected:
-	UPROPERTY(VisibleAnywhere,BlueprintReadOnly, Category="Components|Mesh")
-	USceneComponent* SceneRootComp;
-	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="Components|Mesh")
-	USkeletalMeshComponent* SkeletalMeshComp;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Components|RootComp")
+	TObjectPtr<UCapsuleComponent> CapsuleComp;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Mesh")
+	TObjectPtr<UStaticMeshComponent> StaticMeshComp;
 	
 	virtual void BeginPlay() override;
 public:
