@@ -2,6 +2,8 @@
 
 #include "Components/CapsuleComponent.h"
 #include "EnhancedInputComponent.h"
+#include "Camera/CameraComponent.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "PawnObject/Controller/BasePlayerController.h"
 
 
@@ -16,6 +18,16 @@ AMovingPawn::AMovingPawn()
 	StaticMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
 	StaticMeshComp->SetupAttachment(CapsuleComp);
 	StaticMeshComp->SetSimulatePhysics(false);
+	
+	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComponent"));
+	SpringArmComp->SetupAttachment(RootComponent);
+	SpringArmComp->TargetArmLength = 600.f;
+	SpringArmComp->bUsePawnControlRotation = false;
+	
+	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
+	CameraComp->SetupAttachment(SpringArmComp);
+	CameraComp->bUsePawnControlRotation = false;
+	
 }
 
 

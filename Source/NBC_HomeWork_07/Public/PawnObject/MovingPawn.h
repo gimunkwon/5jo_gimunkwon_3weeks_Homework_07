@@ -4,6 +4,8 @@
 #include "GameFramework/Pawn.h"
 #include "MovingPawn.generated.h"
 
+class UCameraComponent;
+class USpringArmComponent;
 struct FInputActionValue;
 class UCapsuleComponent;
 
@@ -18,6 +20,11 @@ protected:
 	TObjectPtr<UCapsuleComponent> CapsuleComp;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Mesh")
 	TObjectPtr<UStaticMeshComponent> StaticMeshComp;
+	
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Camera")
+	TObjectPtr<USpringArmComponent> SpringArmComp;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Camera")
+	TObjectPtr<UCameraComponent> CameraComp;
 	
 	virtual void BeginPlay() override;
 public:
