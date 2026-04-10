@@ -9,10 +9,11 @@ AMovingPawn::AMovingPawn()
 	
 	CapsuleComp = CreateDefaultSubobject<UCapsuleComponent>(TEXT("CapsuleComponent"));
 	RootComponent = CapsuleComp;
+	CapsuleComp->SetSimulatePhysics(false);
 	
 	StaticMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
 	StaticMeshComp->SetupAttachment(CapsuleComp);
-	
+	StaticMeshComp->SetSimulatePhysics(false);
 }
 
 
