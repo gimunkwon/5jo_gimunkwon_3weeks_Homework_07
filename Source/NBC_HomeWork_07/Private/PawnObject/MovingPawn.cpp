@@ -1,6 +1,8 @@
 #include "NBC_HomeWork_07/Public/PawnObject/MovingPawn.h"
 
 #include "Components/CapsuleComponent.h"
+#include "EnhancedInputComponent.h"
+#include "PawnObject/Controller/BasePlayerController.h"
 
 
 AMovingPawn::AMovingPawn()
@@ -32,5 +34,27 @@ void AMovingPawn::Tick(float DeltaTime)
 void AMovingPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	
+	if (UEnhancedInputComponent* EnhancedInputComp = Cast<UEnhancedInputComponent>(InputComponent))
+	{
+		if (ABasePlayerController* PC = Cast<ABasePlayerController>(GetController()))
+		{
+			EnhancedInputComp->BindAction(PC->IA_Move,ETriggerEvent::Triggered, this, &AMovingPawn::Move);
+			EnhancedInputComp->BindAction(PC->IA_Look,ETriggerEvent::Triggered, this, &AMovingPawn::Look);
+		}
+	}
+	
+}
+
+void AMovingPawn::Move(const FInputActionValue& MoveValue)
+{
+	FVector MoveAmount = MoveValue.Get<FVector>();
+	
+}
+
+void AMovingPawn::Look(const FInputActionValue& LookValue)
+{
+	FVector MoveAmount = LookValue.Get<FVector>();
+	
 }
 

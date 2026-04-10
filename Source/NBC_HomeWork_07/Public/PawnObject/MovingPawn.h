@@ -4,6 +4,7 @@
 #include "GameFramework/Pawn.h"
 #include "MovingPawn.generated.h"
 
+struct FInputActionValue;
 class UCapsuleComponent;
 
 UCLASS()
@@ -20,7 +21,13 @@ protected:
 	
 	virtual void BeginPlay() override;
 public:
-	
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	
+protected:
+	UFUNCTION()
+	void Move(const FInputActionValue& MoveValue);
+	UFUNCTION()
+	void Look(const FInputActionValue& LookValue);
+	
 };
