@@ -26,6 +26,11 @@ protected:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Camera")
 	TObjectPtr<UCameraComponent> CameraComp;
 	
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Speed")
+	float FMoveSpeed;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Speed")
+	float FRotateSpeed;
+	
 	virtual void BeginPlay() override;
 public:
 	virtual void Tick(float DeltaTime) override;

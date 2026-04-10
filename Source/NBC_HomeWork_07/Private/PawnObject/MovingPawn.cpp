@@ -28,6 +28,8 @@ AMovingPawn::AMovingPawn()
 	CameraComp->SetupAttachment(SpringArmComp);
 	CameraComp->bUsePawnControlRotation = false;
 	
+	FMoveSpeed = 1.f;
+	FRotateSpeed = 1.f;
 }
 
 
@@ -61,25 +63,22 @@ void AMovingPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 void AMovingPawn::Move(const FInputActionValue& MoveValue)
 {
-	if (!Controller)
+	if (!Controller) return;
+	
+	FVector2D SpeedAmount = MoveValue.Get<FVector2D>();
+	
+	if (!SpeedAmount.IsNearlyZero())
 	{
-		return;
-	}
-	
-	UE_LOG(LogTemp,Warning,TEXT("Move"));
-	
-	const FVector2D MoveAmount = MoveValue.Get<FVector2D>();
-	
-	UE_LOG(LogTemp,Log,TEXT("MoveAmount %f"),MoveAmount.X);
-	
-	if (!FMath::IsNearlyZero(MoveAmount.X))
-	{
-		AddMovementInput(GetActorForwardVector(), MoveAmount.X);
-	}
-	
-	if (!FMath::IsNearlyZero(MoveAmount.Y))
-	{
-		AddMovementInput(GetActorForwardVector(), MoveAmount.Y);
+		SpeedAmount.Normalize();
+		
+		FVector ForwardVector = GetActorForwardVector() * SpeedAmount.X;
+		FVector RightVector = GetActorRightVector() * SpeedAmount.Y;
+		
+		FVector FinalVector = ForwardVector + RightVector;
+		
+		FVector DeltaLocation = FinalVector * FMoveSpeed * GetWorld()->GetDeltaSeconds();
+		
+		AddActorWorldOffset(DeltaLocation);
 	}
 }
 
@@ -87,6 +86,19 @@ void AMovingPawn::Look(const FInputActionValue& LookValue)
 {
 	if (!Controller) return;
 	
-	FVector MoveAmount = LookValue.Get<FVector>();
+	const FVector2D LookAxisValue = LookValue.Get<FVector2D>();
+	
+	if (!LookAxisValue.IsNearlyZero())
+	{
+		float YawAmount = LookAxisValue.X * FRotateSpeed;
+		float PitchAmount = LookAxisValue.Y * FRotateSpeed;
+		
+		FRotator CombineRotation(PitchAmount,YawAmount,0.f);
+		
+		AddActorLocalRotation(CombineRotation);
+	}
+	
+	
+	
 }
 
