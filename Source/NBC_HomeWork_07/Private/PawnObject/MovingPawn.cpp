@@ -67,7 +67,7 @@ void AMovingPawn::Move(const FInputActionValue& MoveValue)
 {
 	if (!Controller) return;
 	
-	FVector2D SpeedAmount = MoveValue.Get<FVector2D>();
+	FVector SpeedAmount = MoveValue.Get<FVector>();
 	
 	if (!SpeedAmount.IsNearlyZero())
 	{
@@ -75,8 +75,9 @@ void AMovingPawn::Move(const FInputActionValue& MoveValue)
 		
 		FVector ForwardVector = GetActorForwardVector() * SpeedAmount.X;
 		FVector RightVector = GetActorRightVector() * SpeedAmount.Y;
+		FVector UpDownVector = GetActorUpVector() * SpeedAmount.Z;
 		
-		FVector FinalVector = ForwardVector + RightVector;
+		FVector FinalVector = ForwardVector + RightVector + UpDownVector;
 		
 		FVector DeltaLocation = FinalVector * FMoveSpeed * GetWorld()->GetDeltaSeconds();
 		
