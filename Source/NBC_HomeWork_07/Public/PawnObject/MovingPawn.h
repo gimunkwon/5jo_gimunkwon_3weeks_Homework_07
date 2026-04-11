@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/BoxComponent.h"
 #include "GameFramework/Pawn.h"
 #include "MovingPawn.generated.h"
 
@@ -27,6 +28,11 @@ protected:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Camera")
 	TObjectPtr<UCameraComponent> CameraComp;
 	
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Widget")
+	TSubclassOf<UUserWidget> SpeedWidgetClass;
+	UPROPERTY()
+	TObjectPtr<UUserWidget> SpeedWidget;
+ 	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Speed")
 	float FMoveSpeed;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Speed")

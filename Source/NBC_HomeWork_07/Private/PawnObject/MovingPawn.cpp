@@ -1,6 +1,7 @@
 #include "NBC_HomeWork_07/Public/PawnObject/MovingPawn.h"
 
 #include "EnhancedInputComponent.h"
+#include "Blueprint/UserWidget.h"
 #include "Camera/CameraComponent.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -30,6 +31,8 @@ AMovingPawn::AMovingPawn()
 	CameraComp->SetupAttachment(SpringArmComp);
 	CameraComp->bUsePawnControlRotation = false;
 	
+	
+	
 	FMoveSpeed = 1.f;
 	FRotateSpeed = 1.f;
 	FRollSpeed = 1.f;
@@ -41,7 +44,14 @@ AMovingPawn::AMovingPawn()
 void AMovingPawn::BeginPlay()
 {
 	Super::BeginPlay();
-	// Controller = Cast<ABasePlayerController>(GetController());
+	if (SpeedWidgetClass)
+	{
+		SpeedWidget = CreateWidget<UUserWidget>(GetWorld(),SpeedWidgetClass);
+		if (SpeedWidget)
+		{
+			SpeedWidget->AddToViewport();
+		}
+	}
 }
 
 void AMovingPawn::Tick(float DeltaTime)
