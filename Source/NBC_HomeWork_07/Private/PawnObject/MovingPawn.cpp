@@ -30,6 +30,7 @@ AMovingPawn::AMovingPawn()
 	
 	FMoveSpeed = 1.f;
 	FRotateSpeed = 1.f;
+	FRollSpeed = 1.f;
 }
 
 
@@ -56,6 +57,7 @@ void AMovingPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 		{
 			EnhancedInputComp->BindAction(PC->IA_Move,ETriggerEvent::Triggered, this, &AMovingPawn::Move);
 			EnhancedInputComp->BindAction(PC->IA_Look,ETriggerEvent::Triggered, this, &AMovingPawn::Look);
+			EnhancedInputComp->BindAction(PC->IA_Rotate,ETriggerEvent::Triggered, this, &AMovingPawn::Rotate);
 		}
 	}
 	
@@ -97,8 +99,22 @@ void AMovingPawn::Look(const FInputActionValue& LookValue)
 		
 		AddActorLocalRotation(CombineRotation);
 	}
+}
+
+void AMovingPawn::Rotate(const FInputActionValue& RollAmout)
+{
+	if (!Controller) return;
 	
+	float RollValue = RollAmout.Get<float>();
 	
+	if (!FMath::IsNearlyZero(RollValue))
+	{
+		RollValue *= FRollSpeed * GetWorld()->GetDeltaSeconds();
+		
+		FRotator FinalRotateValue(0.f,0.f,RollValue); 
+		
+		AddActorLocalRotation(FinalRotateValue);
+	}
 	
 }
 

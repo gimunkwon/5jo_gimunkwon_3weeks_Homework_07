@@ -30,6 +30,8 @@ protected:
 	float FMoveSpeed;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Speed")
 	float FRotateSpeed;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Speed")
+	float FRollSpeed;
 	
 	virtual void BeginPlay() override;
 public:
@@ -41,5 +43,7 @@ protected:
 	void Move(const FInputActionValue& MoveValue);
 	UFUNCTION()
 	void Look(const FInputActionValue& LookValue);
+	UFUNCTION()
+	void Rotate(const FInputActionValue& RollAmout);
 	
 };
