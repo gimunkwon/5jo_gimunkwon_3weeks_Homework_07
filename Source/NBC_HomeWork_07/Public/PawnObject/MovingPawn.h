@@ -4,6 +4,7 @@
 #include "GameFramework/Pawn.h"
 #include "MovingPawn.generated.h"
 
+class UBoxComponent;
 class UCameraComponent;
 class USpringArmComponent;
 struct FInputActionValue;
@@ -17,7 +18,7 @@ public:
 	AMovingPawn();
 protected:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Components|RootComp")
-	TObjectPtr<UCapsuleComponent> CapsuleComp;
+	TObjectPtr<UBoxComponent> BoxComp;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Mesh")
 	TObjectPtr<UStaticMeshComponent> StaticMeshComp;
 	
@@ -32,6 +33,8 @@ protected:
 	float FRotateSpeed;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Speed")
 	float FRollSpeed;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Speed")
+	float FSlowSpeed;
 	
 	virtual void BeginPlay() override;
 public:
@@ -45,5 +48,12 @@ protected:
 	void Look(const FInputActionValue& LookValue);
 	UFUNCTION()
 	void Rotate(const FInputActionValue& RollAmout);
+	
+	void GravityAcceleration(float DeltaTime);
+	
+private:
+	float VerticalVelocity;
+	const float GravityAccelerationValue = -980.f;
+	bool bIsGround;
 	
 };
