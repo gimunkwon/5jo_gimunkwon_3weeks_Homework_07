@@ -20,6 +20,8 @@ public:
 	TObjectPtr<UInputAction> IA_Move;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category="Input|InputAction")
 	TObjectPtr<UInputAction> IA_Look;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category="Input|InputAction")
+	TObjectPtr<UInputAction> IA_Rotate;
 	
 protected:
 	virtual void BeginPlay() override;
