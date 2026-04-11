@@ -11,12 +11,26 @@ class USpringArmComponent;
 struct FInputActionValue;
 class UCapsuleComponent;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAirModeChanged,bool, bIsAirMode);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSpeedChanged,float, SpeedAmount);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSpeedValueChanged, float, CurrentSpeed, float, MaxSpeed);
+
 UCLASS()
 class NBC_HOMEWORK_07_API AMovingPawn : public APawn
 {
 	GENERATED_BODY()
 public:
 	AMovingPawn();
+	
+	UPROPERTY(BlueprintAssignable,Category="Events")
+	FOnAirModeChanged OnAirModeChanged;
+	UPROPERTY(BlueprintAssignable,Category="Events")
+	FOnSpeedChanged OnSpeedChanged;
+	UPROPERTY(BlueprintAssignable, Category="Events")
+	FOnSpeedValueChanged OnSpeedValueChanged;
+	
+	FORCEINLINE float GetMaxSpeed() const {return FMoveSpeed;}
+	
 protected:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Components|RootComp")
 	TObjectPtr<UBoxComponent> BoxComp;
@@ -58,8 +72,10 @@ protected:
 	void GravityAcceleration(float DeltaTime);
 	
 private:
-	float VerticalVelocity;
 	const float GravityAccelerationValue = -980.f;
-	bool bIsGround;
+	float VerticalVelocity;
+	float Speed;
 	
+	bool bIsGround;
+	bool bIsMove;
 };

@@ -31,14 +31,13 @@ AMovingPawn::AMovingPawn()
 	CameraComp->SetupAttachment(SpringArmComp);
 	CameraComp->bUsePawnControlRotation = false;
 	
-	
-	
 	FMoveSpeed = 1.f;
 	FRotateSpeed = 1.f;
 	FRollSpeed = 1.f;
 	FSlowSpeed = 0.5f;
-	
 	VerticalVelocity = 0.f;
+	
+	bIsMove = false;
 }
 
 void AMovingPawn::BeginPlay()
@@ -63,6 +62,19 @@ void AMovingPawn::Tick(float DeltaTime)
 		VerticalVelocity += GravityAccelerationValue * DeltaTime;
 	}
 	GravityAcceleration(DeltaTime);
+	
+	float TargetSpeed = bIsMove ? 1.f : 0.f;
+	
+	if (OnSpeedChanged.IsBound())
+	{
+		OnSpeedChanged.Broadcast(Speed / FMoveSpeed * TargetSpeed);
+	}
+	if (OnSpeedValueChanged.IsBound())
+	{
+		OnSpeedValueChanged.Broadcast(Speed * TargetSpeed, FMoveSpeed);
+	}
+	bIsMove = false;
+	
 	
 	FString bOnGround = bIsGround ? TEXT("Ground") : TEXT("Sky");
 	
@@ -95,6 +107,7 @@ void AMovingPawn::Move(const FInputActionValue& MoveValue)
 	
 	if (!SpeedVector.IsNearlyZero())
 	{
+		bIsMove = true;
 		SpeedVector.Normalize();
 		
 		FVector ForwardVector = GetActorForwardVector();
@@ -109,6 +122,9 @@ void AMovingPawn::Move(const FInputActionValue& MoveValue)
 		}
 		
 		FVector HorizonVector = (ForwardVector * SpeedVector.X + RightVector * SpeedVector.Y) * FMoveSpeed * DeltaTime;
+		FVector PureVelocity = (ForwardVector * SpeedVector.X + RightVector * SpeedVector.Y) * FMoveSpeed;
+		
+		Speed = PureVelocity.Length();
 		
 		if (!bIsGround)
 		{
@@ -126,7 +142,6 @@ void AMovingPawn::Move(const FInputActionValue& MoveValue)
 		{
 			VerticalVelocity -= FMoveSpeed * DeltaTime;
 		}
-		
 	}
 }
 
@@ -222,11 +237,13 @@ void AMovingPawn::GravityAcceleration(float DeltaTime)
 		{
 			VerticalVelocity = 0.f;
 			bIsGround = true;
+			OnAirModeChanged.Broadcast(bIsGround);
 		}
 	}
 	else
 	{
 		bIsGround = false;
+		OnAirModeChanged.Broadcast(bIsGround);
 	}
 }
 
