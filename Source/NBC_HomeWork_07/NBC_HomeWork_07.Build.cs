@@ -11,7 +11,7 @@ public class NBC_HomeWork_07 : ModuleRules
 		PublicDependencyModuleNames.AddRange(new string[]
 		{
 			"Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput"
-			,"UMG","SlateCore","Slate"
+			,"UMG","SlateCore","Slate","AudioWidgets","Synthesis","AdvancedWidgets"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
