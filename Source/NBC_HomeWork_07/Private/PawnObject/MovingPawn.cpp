@@ -42,6 +42,7 @@ AMovingPawn::AMovingPawn()
 	bIsMove = false;
 	
 	OnAirModeChanged.AddDynamic(this, &AMovingPawn::PlayFlyingSound);
+	OnAirModeChanged.AddDynamic(this, &AMovingPawn::SetDefaultCamRotate);
 }
 
 void AMovingPawn::BeginPlay()
@@ -55,6 +56,7 @@ void AMovingPawn::BeginPlay()
 			SpeedWidget->AddToViewport();
 		}
 	}
+	OriginCamRotation = SpringArmComp->GetRelativeRotation();
 }
 
 void AMovingPawn::Tick(float DeltaTime)
@@ -287,6 +289,15 @@ void AMovingPawn::PlayFlyingSound(bool bOffGround)
 		}
 	}
 }
+
+void AMovingPawn::SetDefaultCamRotate(bool bNotGround)
+{
+	if (!bNotGround)
+	{
+		SpringArmComp->SetRelativeRotation(OriginCamRotation);
+	}
+}
+
 
 
 

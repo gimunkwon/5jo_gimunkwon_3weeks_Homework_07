@@ -77,8 +77,12 @@ protected:
 	
 	void GravityAcceleration(float DeltaTime);
 	void FallingInterp();
+	
 	UFUNCTION()
 	void PlayFlyingSound(bool bOffGround);
+	
+	UFUNCTION()
+	void SetDefaultCamRotate(bool bNotGround);
 	
 	UPROPERTY()
 	TObjectPtr<UAudioComponent> AudioComp;
@@ -88,4 +92,6 @@ private:
 	float Speed;
 	
 	bool bIsMove;
+	
+	FRotator OriginCamRotation;
 };
