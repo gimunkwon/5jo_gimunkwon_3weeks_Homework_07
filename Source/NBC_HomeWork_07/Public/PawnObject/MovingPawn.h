@@ -35,7 +35,7 @@ protected:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Components|RootComp")
 	TObjectPtr<UBoxComponent> BoxComp;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Mesh")
-	TObjectPtr<UStaticMeshComponent> StaticMeshComp;
+	TObjectPtr<USkeletalMeshComponent> SkeletalMeshComp;
 	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Camera")
 	TObjectPtr<USpringArmComponent> SpringArmComp;
@@ -56,6 +56,12 @@ protected:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Speed")
 	float FSlowSpeed;
 	
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="State")
+	bool bIsGround;
+	
+	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category="Sound")
+	TObjectPtr<USoundBase> FlyingSound;
+	
 	virtual void BeginPlay() override;
 public:
 	virtual void Tick(float DeltaTime) override;
@@ -70,12 +76,16 @@ protected:
 	void Rotate(const FInputActionValue& RollAmout);
 	
 	void GravityAcceleration(float DeltaTime);
+	void FallingInterp();
+	UFUNCTION()
+	void PlayFlyingSound(bool bOffGround);
 	
+	UPROPERTY()
+	TObjectPtr<UAudioComponent> AudioComp;
 private:
 	const float GravityAccelerationValue = -980.f;
 	float VerticalVelocity;
 	float Speed;
 	
-	bool bIsGround;
 	bool bIsMove;
 };

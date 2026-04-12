@@ -3,9 +3,11 @@
 #include "EnhancedInputComponent.h"
 #include "Blueprint/UserWidget.h"
 #include "Camera/CameraComponent.h"
+#include "Components/AudioComponent.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "PawnObject/Controller/BasePlayerController.h"
+#include "Kismet/GameplayStatics.h"
 
 
 AMovingPawn::AMovingPawn()
@@ -17,9 +19,9 @@ AMovingPawn::AMovingPawn()
 	BoxComp->SetSimulatePhysics(false);
 	BoxComp->SetCollisionProfileName(FName("Pawn"));
 	
-	StaticMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
-	StaticMeshComp->SetupAttachment(BoxComp);
-	StaticMeshComp->SetSimulatePhysics(false);
+	SkeletalMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMeshComponent"));
+	SkeletalMeshComp->SetupAttachment(BoxComp);
+	SkeletalMeshComp->SetSimulatePhysics(false);
 	
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComponent"));
 	SpringArmComp->SetupAttachment(RootComponent);
@@ -38,6 +40,8 @@ AMovingPawn::AMovingPawn()
 	VerticalVelocity = 0.f;
 	
 	bIsMove = false;
+	
+	OnAirModeChanged.AddDynamic(this, &AMovingPawn::PlayFlyingSound);
 }
 
 void AMovingPawn::BeginPlay()
@@ -124,11 +128,14 @@ void AMovingPawn::Move(const FInputActionValue& MoveValue)
 		FVector HorizonVector = (ForwardVector * SpeedVector.X + RightVector * SpeedVector.Y) * FMoveSpeed * DeltaTime;
 		FVector PureVelocity = (ForwardVector * SpeedVector.X + RightVector * SpeedVector.Y) * FMoveSpeed;
 		
-		Speed = PureVelocity.Length();
-		
 		if (!bIsGround)
 		{
 			HorizonVector *= FSlowSpeed;
+			Speed = PureVelocity.Length() * FSlowSpeed;
+		}
+		else
+		{
+			Speed = PureVelocity.Length();
 		}
 		
 		AddActorWorldOffset(HorizonVector, true);
@@ -212,9 +219,9 @@ void AMovingPawn::GravityAcceleration(float DeltaTime)
 	FVector Start = GetActorLocation();
 	
 	float HalfHeight = BoxComp->GetScaledBoxExtent().Z;
-	float TraceTolerance = 30.0f;
+	float TraceDistance = 70.0f;
 	
-	FVector SenseEnd = Start - FVector(0.f, 0.f, HalfHeight + TraceTolerance);
+	FVector SenseEnd = Start - FVector(0.f, 0.f, HalfHeight + TraceDistance);
     
 	FCollisionQueryParams IgnoreParams;
 	IgnoreParams.AddIgnoredActor(this);
@@ -238,12 +245,46 @@ void AMovingPawn::GravityAcceleration(float DeltaTime)
 			VerticalVelocity = 0.f;
 			bIsGround = true;
 			OnAirModeChanged.Broadcast(bIsGround);
+			FallingInterp();
 		}
 	}
 	else
 	{
 		bIsGround = false;
 		OnAirModeChanged.Broadcast(bIsGround);
+	}
+}
+
+void AMovingPawn::FallingInterp()
+{
+	if (bIsGround)
+	{
+		FRotator CurrentRotation = GetActorRotation();
+		if (!FMath::IsNearlyZero(CurrentRotation.Pitch) || !FMath::IsNearlyZero(CurrentRotation.Roll))
+		{
+			SetActorRotation(FRotator(0.f,CurrentRotation.Yaw,0.f));
+		}
+	}
+}
+
+void AMovingPawn::PlayFlyingSound(bool bOffGround)
+{
+	if (!bOffGround)
+	{
+		if (AudioComp && AudioComp->IsPlaying())
+			return;
+		
+		if (FlyingSound)
+		{
+			AudioComp = UGameplayStatics::SpawnSound2D(this, FlyingSound);
+		}
+	}
+	else
+	{
+		if (AudioComp && AudioComp->IsPlaying())
+		{
+			AudioComp->Stop();
+		}
 	}
 }
 
